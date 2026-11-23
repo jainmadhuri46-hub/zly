@@ -6,7 +6,7 @@ from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     database_url: str = "sqlite+aiosqlite:///./zly.db"
-        @field_validator("database_url", mode="before")
+    @field_validator("database_url", mode="before")
     @classmethod
     def use_asyncpg_for_postgres(cls, value):
         if isinstance(value, str):
