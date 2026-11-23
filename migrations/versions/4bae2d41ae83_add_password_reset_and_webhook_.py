@@ -28,7 +28,7 @@ def upgrade() -> None:
         sa.Column('webhook_id', sa.String(length=36), sa.ForeignKey('webhooks.id', ondelete='CASCADE'), nullable=False, index=True),
         sa.Column('event', sa.String(length=50), nullable=False),
         sa.Column('payload', sa.JSON(), nullable=False),
-        sa.Column('status', sa.String(length=20), nullable=False, server_default=sa.text('pending')),
+        sa.Column('status', sa.String(length=20), nullable=False, server_default=sa.text("'pending'")),
         sa.Column('response_code', sa.Integer(), nullable=True),
         sa.Column('response_body', sa.Text(), nullable=True),
         sa.Column('attempt', sa.Integer(), nullable=False, server_default=sa.text('0')),
