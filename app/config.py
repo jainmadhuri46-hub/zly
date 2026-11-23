@@ -1,10 +1,20 @@
 from warnings import warn
 
+from pydantic import field_validator
 from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
     database_url: str = "sqlite+aiosqlite:///./zly.db"
+        @field_validator("database_url", mode="before")
+    @classmethod
+    def use_asyncpg_for_postgres(cls, value):
+        if isinstance(value, str):
+            if value.startswith("postgres://"):
+                return value.replace("postgres://", "postgresql+asyncpg://", 1)
+            if value.startswith("postgresql://"):
+                return value.replace("postgresql://", "postgresql+asyncpg://", 1)
+        return value
     redis_url: str = "redis://localhost:6379/0"
     secret_key: str = "change-me-in-production"
     jwt_secret: str = "change-me-in-production"
