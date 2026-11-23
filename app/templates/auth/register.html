@@ -6,6 +6,7 @@
     <title>Sign up — Zly</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+    <script src="https://unpkg.com/htmx.org@2.0.4/dist/ext/json-enc.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Lora:ital,wght@0,300;0,400;1,300&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono&display=swap" rel="stylesheet">
@@ -111,9 +112,9 @@
             </a>
         </div>
         <div class="oauth-divider">or email</div>
-        <form hx-post="/api/v1/auth/register" hx-target="#error-msg" hx-swap="innerHTML"
+        <form hx-post="/api/v1/auth/register" hx-ext="json-enc" hx-target="#error-msg" hx-swap="innerHTML"
               hx-on::before-request="document.getElementById('error-msg').style.display='none'"
-              hx-on::after-request="if(event.detail.successful){window.location.href='/dashboard'}">
+              hx-on::after-request="if(event.detail.successful){window.location.href='/dashboard'}else{document.getElementById('error-msg').textContent='Registration failed. Check your details or try another email.';document.getElementById('error-msg').style.display='block'}">
             <div class="field">
                 <label for="email">Email</label>
                 <input id="email" type="email" name="email" class="zly-input" placeholder="you@example.com" required>
