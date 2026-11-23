@@ -64,10 +64,51 @@ async def run_async_migrations() -> None:
     and associate a connection with the context.
 
     """
-    from app.config import settings
+    
+from app.config import settings
+import os
+from sqlalchemy.engine import make_url
+
+raw_url = settings.database_url
+
+print("[DB CHECK] DATABASE_URL present:", bool(os.getenv("DATABASE_URL")))
+print("[DB CHECK] URL empty:", not bool(raw_url and raw_url.strip()))
+print("[DB CHECK] URL length:", len(raw_url) if raw_url else 0)
+
+if not raw_url or not raw_url.strip():
+    raise RuntimeError("DATABASE_URL is missing or empty")
+
+raw_url = raw_url.strip()
+
+if raw_url.startswith("${{"):
+    raise RuntimeError("Railway DATABASE_URL reference was not resolved")
+
+try:
+    parsed_url = make_url(raw_url)
+
+    print("[DB CHECK] Scheme:", parsed_url.drivername)
+    print(
+        "[DB CHECK] Masked URL:",
+        parsed_url.render_as_string(hide_password=True)
+    )
+
+    if parsed_url.drivername == "postgresql":
+        parsed_url = parsed_url.set(drivername="postgresql+asyncpg")
+
+    elif parsed_url.drivername == "postgres":
+        parsed_url = parsed_url.set(drivername="postgresql+asyncpg")
+
+    if parsed_url.drivername != "postgresql+asyncpg":
+        raise RuntimeError("Unexpected database driver")
 
     cfg = config.get_section(config.config_ini_section, {})
-    cfg["sqlalchemy.url"] = settings.database_url
+    cfg["sqlalchemy.url"] = parsed_url.render_as_string(hide_password=False)
+
+except Exception as exc:
+    raise RuntimeError(
+        "DATABASE_URL is invalid. Check Railway variable configuration."
+    ) from exc
+
 
     connectable = async_engine_from_config(
         cfg,
