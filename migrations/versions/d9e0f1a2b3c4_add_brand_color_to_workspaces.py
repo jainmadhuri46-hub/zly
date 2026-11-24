@@ -11,7 +11,7 @@ depends_on = None
 def upgrade() -> None:
     op.add_column(
         "workspaces",
-        sa.Column("brand_color", sa.String(length=20), nullable=True),
+        sa.Column("brand_color", sa.String(length=7), nullable=True),
     )
 
 
