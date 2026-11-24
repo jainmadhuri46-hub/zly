@@ -296,7 +296,7 @@ async def dashboard_summary(
     summary = await get_workspace_summary(db, default_ws.id, 7)
     return templates.TemplateResponse(
         request, "partials/workspace_summary.html",
-        summary.model_dump(),
+        summary,
     )
 
 
