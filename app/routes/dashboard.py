@@ -56,25 +56,7 @@ async def links_page(
     )
 
 
-@router.get("/dashboard/links/{link_id}", response_class=HTMLResponse)
-async def link_detail_page(
-    request: Request,
-    link_id: str,
-    current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db),
-):
-    link = await get_link_by_id(db, link_id)
-    if not link:
-        raise HTTPException(status_code=404)
-    ws = await get_workspace(db, link.workspace_id)
-    if not ws or ws.owner_id != current_user.id:
-        raise HTTPException(status_code=403)
-    return templates.TemplateResponse(
-        request, "dashboard/link_detail.html",
-        {"user": current_user, "link": link},
-    )
-
-
+    
 @router.get("/dashboard/bio", response_class=HTMLResponse)
 async def bio_page(
     request: Request,
@@ -424,6 +406,25 @@ async def link_edit_form(
     return templates.TemplateResponse(
         request, "partials/link_form.html",
         {"link": link, "workspace_id": link.workspace_id},
+    )
+
+@router.get("/dashboard/links/{link_id}", response_class=HTMLResponse)
+async def link_detail_page(
+    request: Request,
+    link_id: str,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    link = await get_link_by_id(db, link_id)
+    if not link:
+        raise HTTPException(status_code=404)
+    ws = await get_workspace(db, link.workspace_id)
+    if not ws or ws.owner_id != current_user.id:
+        raise HTTPException(status_code=403)
+
+    return templates.TemplateResponse(
+        request, "dashboard/link_detail.html",
+        {"user": current_user, "link": link},
     )
 
 
