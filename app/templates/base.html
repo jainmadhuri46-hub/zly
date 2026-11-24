@@ -352,7 +352,7 @@
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
                 Team
             </a>
-            {% if user.is_superuser %}
+            {% if user is defined and user and user.is_superuser %}
             <hr class="grid-border" style="margin: 0.5rem 0;">
             <a href="/dashboard/admin" class="sidebar-link {% if '/dashboard/admin' in request.url.path and '/audit' not in request.url.path %}active{% endif %}">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
@@ -370,16 +370,18 @@
                 ALL SYSTEMS OPERATIONAL
             </span>
         </div>
-        <div class="border-t grid-border" style="padding: 1rem 0.75rem;">
-            <div style="display: flex; align-items: center; gap: 0.625rem;">
-                <div style="width: 2rem; height: 2rem; background: var(--zly-emerald); display: flex; align-items: center; justify-content: center; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 0.65rem; letter-spacing: 0.1em; color: #050a07; flex-shrink: 0;">
-                    {{ user.email[:2].upper() }}
-                </div>
-                <div style="overflow: hidden;">
-                    <p style="font-family: 'Space Grotesk', sans-serif; font-size: 0.7rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: 0.03em;">{{ user.email }}</p>
-                </div>
-            </div>
+        {% if user is defined and user %}
+<div class="border-t grid-border" style="padding: 1rem 0.75rem;">
+    <div style="display: flex; align-items: center; gap: 0.625rem;">
+        <div style="width: 2rem; height: 2rem; background: var(--zly-emerald); display: flex; align-items: center; justify-content: center; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 0.65rem; letter-spacing: 0.1em; color: #050a07; flex-shrink: 0;">
+            {{ user.email[:2].upper() }}
         </div>
+        <div style="overflow: hidden;">
+            <p style="font-family: 'Space Grotesk', sans-serif; font-size: 0.7rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: 0.03em;">{{ user.email }}</p>
+        </div>
+    </div>
+</div>
+{% endif %}
     </aside>
     <main class="main-content">
         {% block content %}{% endblock %}
