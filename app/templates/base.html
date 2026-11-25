@@ -407,7 +407,7 @@
         toast.appendChild(el);
         setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity 0.3s'; setTimeout(() => el.remove(), 300); }, 4000);
     });
-    document.body.addEventListener('htmx:afterSwap', (e) => {
+    document.addEventListener('htmx:configRequest', (e) => {
         if (e.detail?.target?.querySelector('[data-toast-success]')) {
             const msg = e.detail.target.querySelector('[data-toast-success]').getAttribute('data-toast-success');
             const toast = document.getElementById('zly-toast');
