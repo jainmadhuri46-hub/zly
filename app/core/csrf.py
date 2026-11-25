@@ -1,3 +1,4 @@
+
 import secrets
 
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -6,6 +7,7 @@ from starlette.responses import JSONResponse, Response
 from starlette.status import HTTP_403_FORBIDDEN
 
 from app.core.logging import get_logger
+
 logger = get_logger(__name__)
 
 CSRF_COOKIE_NAME = "zly_csrf_token"
@@ -17,8 +19,10 @@ class CSRFMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         if request.method in ("GET", "HEAD", "OPTIONS"):
             response: Response = await call_next(request)
+
             if not request.cookies.get(CSRF_COOKIE_NAME):
                 from app.config import settings
+
                 response.set_cookie(
                     key=CSRF_COOKIE_NAME,
                     value=secrets.token_hex(32),
@@ -27,12 +31,14 @@ class CSRFMiddleware(BaseHTTPMiddleware):
                     samesite="strict",
                     path="/",
                 )
+
             return response
 
         if request.headers.get("Authorization", "").startswith("Bearer "):
             return await call_next(request)
 
         path = request.url.path
+
         if any(path.startswith(p) for p in SKIP_PREFIXES):
             return await call_next(request)
 
@@ -44,15 +50,20 @@ class CSRFMiddleware(BaseHTTPMiddleware):
 
         if not cookie_token or not header_token or cookie_token != header_token:
             logger.warning(
-    "CSRF validation failed: has_cookie=%s has_header=%s tokens_match=%s",
-    bool(cookie_token),
-    bool(header_token),
-    bool(cookie_token and header_token and cookie_token == header_token),
-    extra={
-        "path": str(request.url.path),
-        "method": request.method,
-    },
-)
+                "CSRF validation failed: has_cookie=%s has_header=%s tokens_match=%s",
+                bool(cookie_token),
+                bool(header_token),
+                bool(
+                    cookie_token
+                    and header_token
+                    and cookie_token == header_token
+                ),
+                extra={
+                    "path": str(request.url.path),
+                    "method": request.method,
+                },
+            )
+
             return JSONResponse(
                 status_code=HTTP_403_FORBIDDEN,
                 content={"detail": "CSRF token missing or invalid"},
