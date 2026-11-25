@@ -43,12 +43,16 @@ class CSRFMiddleware(BaseHTTPMiddleware):
         header_token = request.headers.get(CSRF_HEADER_NAME)
 
         if not cookie_token or not header_token or cookie_token != header_token:
-            logger.warning("CSRF validation failed", extra={
-                "path": str(request.url.path),
-                "method": request.method,
-                "has_cookie": bool(cookie_token),
-                "has_header": bool(header_token),
-            })
+            logger.warning(
+    "CSRF validation failed: has_cookie=%s has_header=%s tokens_match=%s",
+    bool(cookie_token),
+    bool(header_token),
+    bool(cookie_token and header_token and cookie_token == header_token),
+    extra={
+        "path": str(request.url.path),
+        "method": request.method,
+    },
+)
             return JSONResponse(
                 status_code=HTTP_403_FORBIDDEN,
                 content={"detail": "CSRF token missing or invalid"},
