@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import settings
 from app.core.dependencies import get_db
-from app.core.security import get_current_user, verify_password
+from app.core.security import get_current_user_from_cookie as get_current_user, verify_password
 from app.models.click import Click
 from app.models.user import User
 from app.schemas.click import ClickResponse
