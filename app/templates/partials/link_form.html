@@ -12,7 +12,7 @@
                 hx-post="/api/v1/links"
             {% endif %}
             hx-ext="json-enc"
-            hx-headers='js:{"X-CSRF-Token": (document.cookie.match(/(?:^|;\s*)zly_csrf_token=([^;]*)/) || [])[1] || ""}'
+            hx-headers='{"X-CSRF-Token": "{{ request.cookies.get("zly_csrf_token", "") }}"}'
             hx-swap="none"
             hx-on::before-request="alert('HTMX request started')"
             hx-on::after-request="if(event.detail.successful){window.location.reload()}">
