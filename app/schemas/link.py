@@ -33,7 +33,8 @@ class LinkCreate(LinkBase):
     password: str | None = Field(None, min_length=1)
     expires_at: datetime | None = None
     activate_at: datetime | None = None
-        @field_validator(
+
+    @field_validator(
         "password", "expires_at", "activate_at",
         mode="before"
     )
@@ -42,6 +43,7 @@ class LinkCreate(LinkBase):
         if v == "":
             return None
         return v
+
     utm_source: str | None = None
     utm_medium: str | None = None
     utm_campaign: str | None = None
